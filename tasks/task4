@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract ATM {
+    
+    address public owner;
+    bool public paused;
+
+    mapping(address => uint256) private balances;
+
+    // EVENTS
+    event Deposit(address indexed user, uint256 amount);
+    event Withdraw(address indexed user, uint256 amount);
+    event Paused();
+    event Unpaused();
+
+    // MODIFIERS
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!paused, "Contract is paused");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+        paused = false;
+    }
+
+    // Deposit ETH
+    function deposit() external payable whenNotPaused {
+        require(msg.value > 0, "Deposit must be greater than 0");
+        balances[msg.sender] += msg.value;
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    // Withdraw ETH (SAFE VERSION)
+    function withdraw(uint256 amount) external whenNotPaused {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        // Effects
+        balances[msg.sender] -= amount;
+
+        // Interaction
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "ETH transfer failed");
+
+        emit Withdraw(msg.sender, amount);
+    }
+
+    // Check balance
+    function checkBalance() external view returns (uint256) {
+        return balances[msg.sender];
+    }
+
+    // Pause contract
+    function pause() external onlyOwner {
+        paused = true;
+        emit Paused();
+    }
+    
+    // Unpause contract
+    function unpause() external onlyOwner {
+        paused = false;
+        emit Unpaused();
+    }
+}
