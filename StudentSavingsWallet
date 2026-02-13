@@ -119,6 +119,7 @@ contract StudentSavingsWallet {
      *  timestamp When the transaction occurred
      *  transactionType Whether it was a "deposit" or "withdraw"
      */
+
     function getTransaction(uint256 index) public view returns (
         address user,
         uint256 amount,
