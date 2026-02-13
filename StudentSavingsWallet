@@ -90,6 +90,7 @@ contract StudentSavingsWallet {
      *  user The address of the user
      *  The balance of the user in wei
      */
+
     function getBalance(address user) public view returns (uint256) {
         return balances[user];
     }
