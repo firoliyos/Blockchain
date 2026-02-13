@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
  *  StudentSavingsWallet
  *  A decentralized savings wallet that allows users to deposit, store, and withdraw ETH
  */
+
 contract StudentSavingsWallet {
     // Mapping to store user balances
     mapping(address => uint256) public balances;
